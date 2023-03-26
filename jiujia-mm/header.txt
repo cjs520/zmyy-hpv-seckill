@@ -1,0 +1,12 @@
+accept: application/json, text/plain, */*
+shortlinkcode: CDLYMYY
+tk: wxtoken:1e8a8172cd67574496cb352eec5b149c_48bf18b460c427a90938e042a3e67070
+user-agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63040026)
+st: ae30ff85c725edf13669f1f132dfe307
+cookie: sajssdk_2015_cross_new_user=1, _xxhm_=%7B%22id%22%3A30817333%2C%22openId%22%3A%22o********%22%2C%22unionid%22%3A%22o********%22%2C%22mobile%22%3A%2217606004690%22%2C%22nickName%22%3A%22%E5%85%BB%E4%B9%90%E5%A4%9A%E3%85%A4%E3%85%A4%E3%85%A4%E3%85%A4%22%2C%22headerImg%22%3A%22https%3A%2F%2Fthirdwx.qlogo.cn%2Fmmopen%2Fvi_32%2FPiajxSqBRaELcDfP9NRLGoO9MiaP61zPprvGonicTPVI2VzSuwkQcltYkm2eEgqbWsIAdGRrmuwNn1lIoLiawezRZA%2F132%22%2C%22regionCode%22%3A%22350582%22%2C%22name%22%3A%22%E9%BB%84*%E9%9B%81%22%2C%22uFrom%22%3A%22systy3%22%2C%22wxSubscribed%22%3A1%2C%22birthday%22%3A%222000-11-15+02%3A00%3A00%22%2C%22sex%22%3A2%2C%22hasPassword%22%3Atrue%2C%22birthdayStr%22%3A%222000-11-15%22%2C%22ymWxMobileAppOpenId%22%3A%22%22%2C%22weiboUid%22%3A%22%22%2C%22appleUserId%22%3A%22%22%2C%22memberStatus%22%3A0%7D, _xzkj_=wxtoken%3A1e8a8172cd67574496cb352eec5b149c_48bf18b460c427a90938e042a3e67070, sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221871b598f99a6-0706522c3f35ba8-61263e23-921600-1871b598f9a43a%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg3MWI1OThmOTlhNi0wNzA2NTIyYzNmMzViYTgtNjEyNjNlMjMtOTIxNjAwLTE4NzFiNTk4ZjlhNDNhIn0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%221871b598f99a6-0706522c3f35ba8-61263e23-921600-1871b598f9a43a%22%7D
+sec-fetch-site: same-origin
+sec-fetch-mode: cors
+sec-fetch-dest: empty
+referer: https://wx.scmttec.com/index.html
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
