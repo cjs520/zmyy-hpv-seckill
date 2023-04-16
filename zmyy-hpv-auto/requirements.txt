@@ -1,0 +1,6 @@
+cryptography==38.0.4
+frida==16.0.2
+mitmproxy==9.0.1
+pycryptodome==3.17
+requests==2.25.1
+urllib3==1.26.3
