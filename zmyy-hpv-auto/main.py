@@ -10,7 +10,8 @@ import threading
 import time
 import traceback
 from binascii import b2a_hex, a2b_hex
-
+import json
+from datetime import date
 import frida
 import requests
 import urllib3
@@ -215,7 +216,7 @@ class ZmyySeckill:
                 print('获取pid出错次数太多')
                 exit()
             try:
-                self.pid = self.get_pid()
+                self.pid = self.clac_pid()
                 break
             except:
                 traceback.print_exc()
@@ -322,8 +323,21 @@ class ZmyySeckill:
             if self.config['zhimiao']['cname'] in i['cname']:
                 return i['id']
         raise Exception('未获取到医院信息')
-
+    def encrypt(self,values):
+        print(values.to_bytes(4, byteorder='little'))
+        return base64.urlsafe_b64encode(values.to_bytes(4, byteorder='little'))
     # 获取疫苗id
+    def clac_pid(self):
+        today = date.today()
+        day = today.day
+        with open('vaccine.json', 'r',encoding='utf-8') as f:
+            data = json.load(f)
+        print(data[self.config['zhimiao']['vaccines']])
+        print(self.cid)
+        sum=int(self.cid)+day+int(data[self.config['zhimiao']['vaccines']])
+        print(sum)
+        pid=self.encrypt(sum).decode('utf-8').replace('=', '')
+        return pid
     def get_pid(self):
         url = 'https://api.cn2030.com/sc/wx/HandlerSubscribe.ashx?act=CustomerProduct&id={}&lat=&lng='.format(
             self.cid
@@ -363,14 +377,15 @@ class ZmyySeckill:
         for i in range(10):
             res = self.get(url, self.proxy)
             # res = self.get(url)
-            if res.text.startswith('{') or res.text.startswith("<"):
-                time.sleep(self.interval)
-                continue
+            # if res.text.startswith('{') or res.text.startswith("<"):
+            #   
+            time.sleep(self.interval)
+            #     continue
             ciphertext = res.text
             log('ciphertext', ciphertext)
-            plaintext = self.aes_decrypt(ciphertext, self.key)
-            log('plaintext', plaintext)
-            times = [i for i in json.loads(plaintext)['list'] if i['qty']]
+            # plaintext = self.aes_decrypt(ciphertext, self.key)
+            # log('plaintext', plaintext)
+            times = [i for i in json.loads(ciphertext)['list'] if i['qty']]
             if not times:
                 # dates.remove(rdate)
                 raise Exception('当前日期{}没有可预约的时间'.format(day))
@@ -472,17 +487,17 @@ if __name__ == '__main__':
         # 知苗配置
         "zhimiao": {
             # 省
-            "province": "河南省",
+            "province": "广东省",
             # 市
-            "city": "安阳市",
+            "city": "揭阳市",
             # 县/区 可留空
             "county": "",
             # 城市代码
-            "cityCode": "410500",
+            "cityCode": "445200",
             # 疫苗名称
-            "vaccines": "九价人乳头瘤病毒疫苗",
+            "vaccines": "四价人乳头瘤病毒疫苗",
             # 医院名称
-            "cname": "安阳市北关区彰东社区卫生服务中心",
+            "cname": "揭阳市揭东区玉湖医院预防接种门诊",
             # 抢购开始时间
             "startTime": "2023-04-15 08:00:00.000",
             # 接种日期，如果公告有接种日期可以提前配置，没有时会自动获取
