@@ -13,25 +13,28 @@ from requests.sessions import RequestsCookieJar
 from Crypto.Cipher import AES
 from Crypto.SelfTest.st_common import a2b_hex, b2a_hex
 from Crypto.Util.Padding import pad, unpad
+
 md5 = hashlib.md5()
 urllib3.disable_warnings()
 
-x = requests.Session() #实例化requests.Session对象
-url = "https://cloud.cn2030.com" #URL变量
-proxies = {'https': '127.0.0.1:8888','http':'127.0.0.1:8888'} #测试代理
-mxid = {} # 需要遍历的字典 {"日期":"产品mxid"}
+x = requests.Session()  # 实例化requests.Session对象
+url = "https://cloud.cn2030.com"  # URL变量
+proxies = {'https': '127.0.0.1:8888', 'http': '127.0.0.1:8888'}  # 测试代理
+mxid = {}  # 需要遍历的字典 {"日期":"产品mxid"}
 date_mxid = []  # 接种日期列表 ['04-17','04-18']
-#微信win_lzj
 
-def getZftsl(): # 请求头获取Zftsl字段
+
+# 微信win_lzj
+
+def getZftsl():  # 请求头获取Zftsl字段
     strtime = str(round(time.time() * 100))
-    str1 = "zfsw_"+strtime
+    str1 = "zfsw_" + strtime
     md5.update(str1.encode("utf-8"))
     value = md5.hexdigest()
     return value
 
 
-def getDecrypt(k, value, iv=b'1234567890000000'): # Body解密，CBC模式，pkcs7填充，数据块128，偏移1234567890000000
+def getDecrypt(k, value, iv=b'1234567890000000'):  # Body解密，CBC模式，pkcs7填充，数据块128，偏移1234567890000000
     try:
         cryptor = AES.new(k.encode('utf-8'), AES.MODE_CBC, iv)
         value_hex = a2b_hex(value)
@@ -43,7 +46,7 @@ def getDecrypt(k, value, iv=b'1234567890000000'): # Body解密，CBC模式，pkc
         return False
 
 
-def getEncrypt(k, value, iv=b'1234567890000000'): # Body加密，CBC模式，pkcs7填充，数据块128，偏移1234567890000000
+def getEncrypt(k, value, iv=b'1234567890000000'):  # Body加密，CBC模式，pkcs7填充，数据块128，偏移1234567890000000
     try:
         value = value.encode('UTF-8')
         cryptor = AES.new(k.encode('utf-8'), AES.MODE_CBC, iv)
@@ -75,12 +78,14 @@ def getEncrypt(k, value, iv=b'1234567890000000'): # Body加密，CBC模式，pkc
 #     except Exception as e:
 #         print("获取签名错误：", e)
 #         return False
-#重写Sign
-def getSign(r):#设置用户签名，用于解密
+# 重写Sign
+def getSign(r):  # 设置用户签名，用于解密
     global Sign
     # 将jiujia.ini中的Sign值赋值给Sign
     # s
-def getHeaders(): #返回请求头
+
+
+def getHeaders():  # 返回请求头
     # 'Cookie': 'ASP.NET_SessionId=' + cookie,
 
     # 电脑UA
@@ -103,7 +108,7 @@ def getHeaders(): #返回请求头
     return headers
 
 
-def getPayload(p_id, id, scdate): #返回Payload
+def getPayload(p_id, id, scdate):  # 返回Payload
     payload = {
         'act': 'GetCustSubscribeDateDetail',
         'pid': p_id,
@@ -113,12 +118,13 @@ def getPayload(p_id, id, scdate): #返回Payload
     return payload
 
 
-def getMxid(scdate): #获取scdate日期当天的产品列表
+def getMxid(scdate):  # 获取scdate日期当天的产品列表
     try:
         list1 = []
         r = x.get(url=url + '/sc/wx/HandlerSubscribe.ashx', headers=getHeaders(), params=getPayload(p_id, id, scdate),
                   timeout=1, verify=False)
-        j = getDecrypt(Sign, r.text)
+        # j = getDecrypt(Sign, r.text)
+        j = json.loads(r.text)
         if (j["status"] == 200):
             if ('mxid' in str(j)):
                 for i in j["list"]:
@@ -137,7 +143,7 @@ def getMxid(scdate): #获取scdate日期当天的产品列表
         return False
 
 
-def getDate(): #获取疫苗可预约时间
+def getDate():  # 获取疫苗可预约时间
     current_date = datetime.datetime.now().strftime('%Y%m')
     payload = {
         'act': 'GetCustSubscribeDateAll',
@@ -161,7 +167,7 @@ def getDate(): #获取疫苗可预约时间
         print("获取日期失败：", e)
 
 
-def set_Cookie(r): #设置cookie
+def set_Cookie(r):  # 设置cookie
     global cookie
     try:
         del x.cookies['ASP.NET_SessionId']
@@ -169,15 +175,34 @@ def set_Cookie(r): #设置cookie
         x.cookies.update(cookies)
         cookie_dict = requests.utils.dict_from_cookiejar(r.cookies)
         new_cookie = cookie_dict['ASP.NET_SessionId']
-        update_config(cookie,new_cookie)
+        update_config(cookie, new_cookie)
         cookie = new_cookie
         return True
     except Exception as e:
         print("cookie出错：", e)
         return False
 
+def get_captcha(mxid):
+        print('\n4. 验证码')
+        url = 'https://api.cn2030.com/sc/wx/HandlerSubscribe.ashx?act=GetCaptcha&mxid={}'.format(mxid)
+        res = x.get(url)
+        print(res.json())
+        # res = self.get(url)
+        if res.json()['status'] == 200:
+            # 更新cookie
+            # log(self.headers['cookie'])
+            print('进来了')
+            cd = requests.utils.dict_from_cookiejar(res.cookies)
+            x.headers['cookie'] = '{}={}'.format('ASP.NET_SessionId', cd['ASP.NET_SessionId'])
+            return 1
+        else:
+            print("失败了")
+            with open('{}.txt'.format(int(time.time() * 1000)), 'w', encoding='utf-8') as f:
+                f.write(res.text)
+            raise Exception(res.text)
 
-def yanZheng_code(mxid): #请求查询是否获取验证码
+
+def yanZheng_code(mxid):  # 请求查询是否获取验证码
     global r_cookie
     payload = {
         'act': 'GetCaptcha',
@@ -199,29 +224,34 @@ def yanZheng_code(mxid): #请求查询是否获取验证码
         return False
 
 
-def OrderPost(mxid, scdate): #提交订单信息
+def OrderPost(mxid, scdate):  # 提交订单信息
+    print(mxid,scdate)
     try:
         postContext = '{"birthday":"%s","tel":"%s","sex":%s,"cname":"%s","doctype":1,"idcard":"%s","mxid":"%s","date":"%s","pid":"%s","Ftime":1,"guid":""}' % (
             birthday, tel, sex, cname, idcard, mxid, scdate, p_id)
         postContext = getEncrypt(Sign, postContext)
-        r = x.post(url=url + '/sc/api/User/OrderPost', data=postContext,timeout=1, headers=getHeaders(), verify=False)
+        print(postContext)
+        r = x.post(url=url + '/sc/api/User/OrderPost', data=postContext, timeout=1, headers=getHeaders(), verify=False)
         if ("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9" not in r.headers.get('set-cookie')):
-            set_Cookie(r_cookie)
-        if (r.status_code == 200):
-            j = json.loads(r.text)
-            if (j['status'] == 200):
-                print("状态: " + j["msg"], end='')
-                return True
+            print(r.text)
+            print(r.status_code)
+            # set_Cookie(r_cookie)
+            if (r.status_code == 200):
+                j = json.loads(r.text)
+                if (j['status'] == 200):
+                    print("状态: " + j["msg"], end='')
+                    return True
+                else:
+                    print("状态: " + j["msg"], end='\n')
+                    return False
             else:
-                print("状态: " + j["msg"], end='')
+                print("状态: " + r.status_code, end='\n')
                 return False
-        else:
-            return False
     except Exception as e:
         print("OrderPost：", e)
 
 
-def GetOrderStatus(): #获取订单信息状态
+def GetOrderStatus():  # 获取订单信息状态
     try:
         payload = {
             'act': 'GetOrderStatus'
@@ -240,7 +270,7 @@ def GetOrderStatus(): #获取订单信息状态
         print("GetOrderStatus：", e)
 
 
-def getUserInfo(): #获取用户基本信息
+def getUserInfo():  # 获取用户基本信息
     global birthday, tel, cname, sex, idcard
     payload = {
         'act': 'User'
@@ -254,7 +284,7 @@ def getUserInfo(): #获取用户基本信息
             sex = j['user']['sex']
             cname = j['user']['cname']
             idcard = j['user']['idcard']
-            print("登录成功，用户：", cname,end='')
+            print("登录成功，用户：", cname, end='')
             return True
         else:
             print('Cookie出错：%s' % r.text)
@@ -268,7 +298,7 @@ def getUserInfo(): #获取用户基本信息
         return False
 
 
-def file_config(): #初始化配置文件
+def file_config():  # 初始化配置文件
     global cookie
     global wait_speed
     global buy_speed
@@ -280,7 +310,7 @@ def file_config(): #初始化配置文件
         try:
             cf.read("jiujia.ini", encoding='utf-8')
             cookie = cf.get("jiujia", "cookie")
-            Sign = cf.get("jiujia","Sign")
+            Sign = cf.get("jiujia", "Sign")
             print(Sign)
             wait_speed = cf.get("jiujia", "wait_speed")
             buy_speed = cf.get("jiujia", "buy_speed")
@@ -299,7 +329,7 @@ def file_config(): #初始化配置文件
         sys.exit(0)
 
 
-def update_config(old_cookie, new_cookie): #更新配置文件中的Cookie
+def update_config(old_cookie, new_cookie):  # 更新配置文件中的Cookie
     file_data = ""
     with open('jiujia.ini', "r", encoding="UTF-8") as f:
         for line in f:
@@ -310,7 +340,7 @@ def update_config(old_cookie, new_cookie): #更新配置文件中的Cookie
         f.write(file_data)
 
 
-def main(): #主体程序
+def main():  # 主体程序
     for i in date_mxid:  # 循环日期列表获取接种列表
         max_retry = 0
         while max_retry < 3:
@@ -320,7 +350,7 @@ def main(): #主体程序
                     print("抢苗接种时间：", i)
                     for mxid_now in mxid[i]:
                         print('开始第%s次抢购 (%s) ' % (cishu, mxid_now), end='')
-                        if (yanZheng_code(mxid_now)):
+                        if (get_captcha(mxid_now)):
                             time.sleep(int(buy_speed) / 1000)
                             if (OrderPost(mxid_now, i)):
                                 time.sleep(int(buy_speed) / 1000)
@@ -336,12 +366,12 @@ def main(): #主体程序
             max_retry += 1
 
 
-cookie = '1'        # cookie 小程序抓包cookie
-wait_speed = '1000' # wait_speed 等待开始刷新时间，单位毫秒
+cookie = '1'  # cookie 小程序抓包cookie
+wait_speed = '1000'  # wait_speed 等待开始刷新时间，单位毫秒
 buy_speed = '1000'  # buy_speed 抢购间隔，单位毫秒
-Sign = '1'          # 签名
-p_id = '1'       # p_id 疫苗产品id（1是九价）
-id = '1843'            # id 门诊医院id
+Sign = '1'  # 签名
+p_id = '1'  # p_id 疫苗产品id（1是九价）
+id = '1843'  # id 门诊医院id
 
 if __name__ == '__main__':
     # cookie = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDk5NTY1MDIuNzk0MTMyMiwiZXhwIjoxNjQ5OTYwMTAyLjc5NDEzMjIsInN1YiI6IllOVy5WSVAiLCJqdGkiOiIyMDIyMDQxNTAxMTUwMiIsInZhbCI6IkwydlFBQUlBQUFBUVlUTTBZMlV3TUdOak5HTmtOVGN4TWh4dmNYSTFielZNY0VsRWRFMXFZMnR6UzA1ckxXTkdNelpOTldKekFCeHZcclxuVlRJMldIUTJVRlZNTVU5TlNFMTVlV1JOVDFOcGRtSnNTalJSRHpFeU5DNHlNall1TWpVeExqSXpNQUFBQUFBQUFBQT0ifQ.3-Uu3qizNJvgQDm7sTPCAEkU-Hp2lxmYwfeqIOPbaGY'
@@ -356,8 +386,7 @@ if __name__ == '__main__':
     # }
     # requests.utils.add_dict_to_cookiejar(x.cookies, cookie_2) #3.设置Cookie
 
-
-    file_config()  #初始化用户信息
+    file_config()  # 初始化用户信息
     getUserInfo()  # 获取用户信息
     # getSign()  # 生成解密秘钥
 

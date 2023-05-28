@@ -227,7 +227,7 @@ func Start() {
 
 			eccHs := m.EccHs(selectedVaccineIdStr, selectedMemberIdStr, strconv.FormatInt(st, 10))
 			fmt.Println("eccHs:", eccHs)
-			if m.secKill(selectedVaccineIdStr, selectedMemberIdStr, selectedIdCard) {
+			if m.secKill(selectedVaccineIdStr, selectedMemberIdStr, selectedIdCard, eccHs) {
 				// 秒杀成功就退出循环了
 				// break
 				success = true
@@ -768,19 +768,19 @@ func (m *Miaomiao) getSt(selectedVaccineIdStr string) (st int64) {
 }
 
 // 开始秒杀
-func (m *Miaomiao) secKill(selectedVaccineIdStr string, selectedMemberIdStr string, selectedIdCard string) (success bool) {
+func (m *Miaomiao) secKill(selectedVaccineIdStr string, selectedMemberIdStr string, selectedIdCard string, eccHs string) (success bool) {
 	log.Infof("发送秒杀请求...")
 	// 	return false
 	// 开始秒杀
 	resp, err := m.Request(m.Apis.Subscribe, map[string]interface{}{
-		//"Content-Length": "61",
-		//"isFormData": "[object Boolean]",
-		//"Content-Type":   "application/x-www-form-urlencoded;charset=UTF-8",
-		"vaccineIndex": "1",
-		"seckillId":    selectedVaccineIdStr, // 疫苗 id
-		"linkmanId":    selectedMemberIdStr,  // 接种人 id
-		"idCardNo":     selectedIdCard,       // 接种人身份证号
-		//"ecc-hs":       eccHs,                // 加密参数，每次秒杀前都必须要重新请求一次，st 接口会返回一个与疫苗 id 有关的 cookie，且每次请求那个 cookie 值都会改变
+		"Content-Length": "61",
+		"isFormData":     "[object Boolean]",
+		"Content-Type":   "application/x-www-form-urlencoded;charset=UTF-8",
+		"vaccineIndex":   "1",
+		"seckillId":      selectedVaccineIdStr, // 疫苗 id
+		"linkmanId":      selectedMemberIdStr,  // 接种人 id
+		"idCardNo":       selectedIdCard,       // 接种人身份证号
+		"ecc-hs":         eccHs,                // 加密参数，每次秒杀前都必须要重新请求一次，st 接口会返回一个与疫苗 id 有关的 cookie，且每次请求那个 cookie 值都会改变
 	})
 
 	fmt.Println(resp)

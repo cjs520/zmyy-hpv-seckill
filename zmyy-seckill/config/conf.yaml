@@ -1,27 +1,29 @@
 zhiyiyuemiao:
   #  【必填】省
-  province: "广西壮族自治区"
+  province: "河南省"
   #  【选填】市
-  city: "贵港市"
+  city: "安阳市"
   #  区（可以不用填，不打算开发此功能）
   district: ""
   #  【必填】抢购疫苗的类型（必填），务必与小程序上的名称一致
   productName: "九价人乳头瘤病毒疫苗"
   #  【必填】预约地点名称(必填),务必与小程序上的名称一致
-  customerName: "贵港市平南县疾病预防控制中心门诊"
+  customerName: "安阳市北关区彰东社区卫生服务中心"
   #  【必填】预约时间
-  subscribeTime: "2023-03-19 19:59:40"
+  subscribeTime: "2023-04-09 08:59:50"
   #  【必填】疫苗可预约的月份
   month: 202103
   #  【必填】生日
   birthday: "1999-04-28"
   #  【必填】电话
-  tel: "xxxx"
+  tel: "14777891828"
   #  【必填】性别：1为男性 2为女性
   sex: 2
   #  【必填】姓名
-  name: "xxx"
+  name: "黄湘婷"
   #  【必填】身份证号
-  idcard: "xxx"
+  idcard: "450422199904280821"
   #  【必填】这个Cookie需要抓包获取 【有效期为5分钟或更久】
-  cookie: "ASP.NET_SessionId=xxx"
+  cookie: "ASP.NET_SessionId=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2ODE2MDg3MzIuNjM0MTcyLCJleHAiOjE2ODE2MTIzMzIuNjM0MTcyLCJzdWIiOiJZTlcuVklQIiwianRpIjoiM
+jAyMzA0MTYwOTMyMTIiLCJ2YWwiOiJpRUpwQVFJQUFBQUVibTl1WlJ4dmNYSTFielZHVEVwMFdrazFVVnBJVUdKeU9EaGZSbEpYTFdkQkFSeHZWVEkyV0hRNVZUUmlXa2R1XHJcblpEQndOVTFWUjNsUlVWTktSMlZqRFRFeE9TNDBNUzR5TWpFdU5qY0FBQUFBQUFBQSJ9.8teGoghnLeRqhM0rQrKs0RkJWERD2yu-YPLNquUfyog
+"
